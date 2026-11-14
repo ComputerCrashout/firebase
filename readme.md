@@ -79,7 +79,7 @@ Run each question in the app, open **Sources**, and fill the last three columns 
 | 1 | Answerable | What can I buy at Ben Thanh Market? | G01 | *G01* | *True* | Extraction speed. |
 | 2 | Answerable | Which building is famous for a tank crashing through its gates in 1975? | G03 | *G03* | *True* | Extraction speed |
 | 3 | Answerable | How far are the Cu Chi Tunnels from the city centre? | G06 | *G06* | *True* | Extraction speed. |
-| 4 | Paraphrase | Where can I get iced coffee made with condensed milk? | G13 | "I don't know" | *False* | Unable to extract conext and subject. Therefor unable to retrieve ID. |
+| 4 | Paraphrase | Where can I jeans, shirts and shoes? | G01 | "I don't know" | *False* | Unable to extract conext and subject. Therefor unable to retrieve ID. |
 | 5 | Not in guide | What are the opening hours of the War Remnants Museum? | none | "I don't know" | *True* | Extraction speed. |
 | 6 | Not in guide | How much does a Grab to the airport cost? | none | "I don't know" | *True* | None |
 
