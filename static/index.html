@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumen Travel Assistant</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1c2430; --muted:#6b7686; --accent:#1f5fbf; --line:#dde2ea; --err:#b3261e; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#12161c; --card:#1b212a; --ink:#e8ecf2; --muted:#93a0b2; --accent:#6ea4ff; --line:#2c3541; --err:#ff8a80; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, sans-serif; }
+  header { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; background:var(--card); border-bottom:1px solid var(--line); }
+  header h1 { font-size:18px; margin:0; }
+  main { max-width:760px; margin:0 auto; padding:20px 16px 120px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  input { width:100%; padding:10px 12px; margin:6px 0 12px; border:1px solid var(--line); border-radius:8px; background:transparent; color:inherit; font:inherit; }
+  button { padding:9px 16px; border:0; border-radius:8px; background:var(--accent); color:#fff; font:inherit; cursor:pointer; }
+  button.secondary { background:transparent; color:var(--accent); border:1px solid var(--accent); }
+  button:disabled { opacity:.5; cursor:default; }
+  .row { display:flex; gap:10px; }
+  .err { color:var(--err); min-height:1.4em; margin:8px 0 0; }
+  .msg { margin:14px 0; display:flex; flex-direction:column; }
+  .msg .bubble { padding:10px 14px; border-radius:12px; max-width:90%; white-space:pre-wrap; border:1px solid var(--line); background:var(--card); }
+  .msg.user { align-items:flex-end; }
+  .msg.user .bubble { background:var(--accent); color:#fff; border-color:var(--accent); }
+  details { margin-top:6px; max-width:90%; font-size:14px; color:var(--muted); }
+  details .src { margin:8px 0; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--ink); }
+  .score { font-variant-numeric:tabular-nums; color:var(--muted); }
+  .used { color:#1b7f3b; font-weight:600; }
+  form#ask { position:fixed; left:0; right:0; bottom:0; padding:12px 16px; background:var(--card); border-top:1px solid var(--line); }
+  form#ask .inner { max-width:760px; margin:0 auto; display:flex; gap:10px; }
+  form#ask input { margin:0; }
+  .hidden { display:none !important; }
+  .hint { color:var(--muted); font-size:14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Lumen Travel &middot; Ho Chi Minh City</h1>
+  <div id="who" class="hidden"><span id="email" class="hint"></span> <button id="signout" class="secondary">Sign out</button></div>
+</header>
+
+<main>
+  <section id="auth" class="card">
+    <h2 style="margin-top:0">Sign in to chat</h2>
+    <label>Email<input id="a-email" type="email" autocomplete="email"></label>
+    <label>Password<input id="a-pass" type="password" autocomplete="current-password"></label>
+    <div class="row">
+      <button id="btn-in">Sign in</button>
+      <button id="btn-up" class="secondary">Create account</button>
+    </div>
+    <p id="auth-err" class="err"></p>
+  </section>
+
+  <section id="chat" class="hidden">
+    <p class="hint">Ask about Ho Chi Minh City. Answers come only from the Lumen Travel guide; open <em>Sources</em> under a reply to see which entries were retrieved.</p>
+    <div id="log"></div>
+  </section>
+</main>
+
+<form id="ask" class="hidden">
+  <div class="inner">
+    <input id="q" placeholder="Ask about Ho Chi Minh City..." autocomplete="off">
+    <button id="send" type="submit">Send</button>
+  </div>
+  <div class="inner"><p id="chat-err" class="err" style="margin:6px 0 0"></p></div>
+</form>
+
+<script>
+const $ = id => document.getElementById(id);
+let token = null;
+
+function save(s) { try { sessionStorage.setItem("lumen", JSON.stringify(s)); } catch (_) {} }
+function load() { try { return JSON.parse(sessionStorage.getItem("lumen")); } catch (_) { return null; } }
+function clearSaved() { try { sessionStorage.removeItem("lumen"); } catch (_) {} }
+
+async function api(path, method, body) {
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = "Bearer " + token;
+  let res;
+  try {
+    res = await fetch(path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+  } catch (e) {
+    throw { status: 0, message: "Cannot reach the app server." };
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw { status: res.status, message: data.error || "Something went wrong." };
+  return data;
+}
+
+function show(signedIn, email) {
+  $("auth").classList.toggle("hidden", signedIn);
+  $("chat").classList.toggle("hidden", !signedIn);
+  $("ask").classList.toggle("hidden", !signedIn);
+  $("who").classList.toggle("hidden", !signedIn);
+  $("email").textContent = email || "";
+}
+
+function addMessage(role, text, sources) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg " + role;
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.textContent = text;
+  wrap.appendChild(bubble);
+
+  if (sources && sources.length) {
+    const d = document.createElement("details");
+    const s = document.createElement("summary");
+    s.textContent = "Sources (" + sources.length + " retrieved)";
+    d.appendChild(s);
+    for (const h of sources) {
+      const box = document.createElement("div");
+      box.className = "src";
+      const head = document.createElement("div");
+      const b = document.createElement("strong");
+      b.textContent = "[" + h.id + "] " + h.title;
+      const sc = document.createElement("span");
+      sc.className = "score";
+      sc.textContent = "  score " + h.score.toFixed(3);
+      head.append(b, sc);
+      if (h.used) {
+        const u = document.createElement("span");
+        u.className = "used";
+        u.textContent = "  used";
+        head.appendChild(u);
+      }
+      const t = document.createElement("div");
+      t.textContent = h.text;
+      const src = document.createElement("div");
+      src.className = "hint";
+      src.textContent = "Source: " + h.source;
+      box.append(head, t, src);
+      d.appendChild(box);
+    }
+    wrap.appendChild(d);
+  }
+  $("log").appendChild(wrap);
+  wrap.scrollIntoView({ block: "end" });
+}
+
+async function enter(session) {
+  token = session.idToken;
+  save(session);
+  show(true, session.email);
+  $("log").innerHTML = "";
+  try {
+    const hist = await api("/api/history", "GET");
+    for (const m of hist) addMessage(m.role, m.content, m.sources);
+  } catch (e) { if (e.status === 401) leave(); }
+}
+
+function leave() {
+  token = null;
+  clearSaved();
+  $("log").innerHTML = "";
+  show(false);
+}
+
+async function authenticate(kind) {
+  $("auth-err").textContent = "";
+  const email = $("a-email").value.trim();
+  const password = $("a-pass").value;
+  if (!email || !password) { $("auth-err").textContent = "Please enter both email and password."; return; }
+  $("btn-in").disabled = $("btn-up").disabled = true;
+  try {
+    const session = await api("/api/" + kind, "POST", { email, password });
+    $("a-pass").value = "";
+    await enter(session);
+  } catch (e) {
+    $("auth-err").textContent = e.message;
+  } finally {
+    $("btn-in").disabled = $("btn-up").disabled = false;
+  }
+}
+
+$("btn-in").onclick = () => authenticate("signin");
+$("btn-up").onclick = () => authenticate("signup");
+$("a-pass").addEventListener("keydown", e => { if (e.key === "Enter") authenticate("signin"); });
+
+$("signout").onclick = async () => {
+  try { await api("/api/signout", "POST"); } catch (_) {}
+  leave();
+};
+
+$("ask").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  $("chat-err").textContent = "";
+  const q = $("q").value.trim();
+  if (!q) { $("chat-err").textContent = "Please type a question."; return; }
+  addMessage("user", q);
+  $("q").value = "";
+  $("send").disabled = true;
+  $("send").textContent = "Thinking...";
+  try {
+    const r = await api("/api/chat", "POST", { question: q });
+    addMessage("assistant", r.answer, r.sources);
+  } catch (e) {
+    if (e.status === 401) { leave(); $("auth-err").textContent = e.message; }
+    else $("chat-err").textContent = e.message;
+  } finally {
+    $("send").disabled = false;
+    $("send").textContent = "Send";
+    $("q").focus();
+  }
+});
+
+(async () => {
+  const saved = load();
+  if (saved && saved.idToken) await enter(saved);
+})();
+</script>
+</body>
+</html>

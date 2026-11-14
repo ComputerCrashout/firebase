@@ -1,0 +1,97 @@
+[
+  {
+    "id": "G01",
+    "title": "Ben Thanh Market",
+    "text": "Ben Thanh Market is the best-known covered market in the middle of District 1. Inside, stalls sell souvenirs, clothes, dried fruit, coffee and fabric, and a food section serves quick local meals. Prices are usually not fixed, so visitors are expected to bargain politely.",
+    "source": "Author's notes",
+    "category": "market",
+    "tags": ["shopping", "souvenirs", "food", "district 1"]
+  },
+  {
+    "id": "G02",
+    "title": "War Remnants Museum",
+    "text": "The War Remnants Museum in District 3 explains the Vietnam War through photographs, documents and military vehicles shown in an outdoor yard. Some rooms are emotionally heavy, so it is better to visit with enough time and a calm mind.",
+    "source": "Author's notes",
+    "category": "museum",
+    "tags": ["history", "war", "indoor", "district 3"]
+  },
+  {
+    "id": "G03",
+    "title": "Independence Palace (Reunification Palace)",
+    "text": "Independence Palace is the former presidential residence of South Vietnam. It is famous because in April 1975 a tank drove through its gates, an event that marked the end of the war. Visitors can walk through the meeting rooms, the living areas and the basement command rooms.",
+    "source": "Author's notes",
+    "category": "landmark",
+    "tags": ["history", "architecture", "indoor", "district 1"]
+  },
+  {
+    "id": "G04",
+    "title": "Notre-Dame Cathedral Basilica of Saigon",
+    "text": "This red-brick cathedral was built by the French in the late 1800s and has two tall bell towers. It stands in a small square in District 1 and is a popular photo spot. The building has been under restoration work for several years, so what visitors can see up close may change.",
+    "source": "Author's notes",
+    "category": "landmark",
+    "tags": ["architecture", "colonial", "photography", "district 1"]
+  },
+  {
+    "id": "G05",
+    "title": "Saigon Central Post Office",
+    "text": "The Central Post Office sits right next to the cathedral. It was built in the French colonial period and has a high arched ceiling and old maps on the walls. It is still a working post office, so travellers can send postcards from it.",
+    "source": "Author's notes",
+    "category": "landmark",
+    "tags": ["architecture", "colonial", "postcards", "district 1"]
+  },
+  {
+    "id": "G06",
+    "title": "Cu Chi Tunnels",
+    "text": "The Cu Chi Tunnels are a network of underground passages used during the war, located roughly 70 km north-west of the city centre. Most visitors go on a half-day trip, walk through the forest, see hidden entrances and crawl through a short tunnel section prepared for tourists.",
+    "source": "Author's notes",
+    "category": "historical site",
+    "tags": ["history", "day trip", "outdoor", "war"]
+  },
+  {
+    "id": "G07",
+    "title": "Mekong Delta day trip",
+    "text": "Towns such as My Tho and Ben Tre in the Mekong Delta can be visited in a day from the city. Typical activities are small boat rides along canals, tasting tropical fruit, watching coconut candy being made and riding bicycles between villages.",
+    "source": "Author's notes",
+    "category": "nature",
+    "tags": ["day trip", "river", "outdoor", "fruit", "boat"]
+  },
+  {
+    "id": "G08",
+    "title": "Bui Vien Walking Street",
+    "text": "Bui Vien is the backpacker street of District 1. In the evening it is closed to cars and fills with bars, street snacks, loud music and crowds. It is lively and cheap but not a quiet place, so it suits people who want nightlife.",
+    "source": "Author's notes",
+    "category": "nightlife",
+    "tags": ["bars", "backpackers", "evening", "district 1"]
+  },
+  {
+    "id": "G09",
+    "title": "Nguyen Hue Walking Street",
+    "text": "Nguyen Hue is a wide pedestrian boulevard that runs from the City Hall towards the Saigon River. Locals come here in the evening to stroll, take photos and sit in cafes. One old apartment building along the street has been turned into a stack of small cafes and shops.",
+    "source": "Author's notes",
+    "category": "public space",
+    "tags": ["walking", "cafes", "evening", "photography", "district 1"]
+  },
+  {
+    "id": "G10",
+    "title": "Cho Lon (Chinatown)",
+    "text": "Cho Lon in District 5 is the old Chinese-Vietnamese quarter of the city. Highlights include Binh Tay Market, which sells wholesale goods, and Thien Hau Temple, a colourful temple with hanging incense coils. It is less touristy than District 1 and good for a slow walk.",
+    "source": "Author's notes",
+    "category": "neighbourhood",
+    "tags": ["temple", "market", "culture", "district 5"]
+  },
+  {
+    "id": "G11",
+    "title": "Landmark 81",
+    "text": "Landmark 81 in Binh Thanh District is one of the tallest buildings in Southeast Asia. Besides offices and apartments it has a shopping mall at the bottom and an observation deck near the top with views over the Saigon River and the city.",
+    "source": "Author's notes",
+    "category": "landmark",
+    "tags": ["skyscraper", "views", "shopping", "binh thanh"]
+  },
+  {
+    "id": "G12",
+    "title": "Street food to try",
+    "text": "Ho Chi Minh City is known for street food. Good first dishes are banh mi (a baguette sandwich), pho (noodle soup), com tam (broken rice with grilled pork) and hu tieu (a noodle soup with a clear broth). Small plastic-stool stalls are normal and are often where locals eat.",
+    "source": "Author's notes",
+    "tags": ["food", "banh mi", "pho", "com tam", "hu tieu"]
+  }
+]
