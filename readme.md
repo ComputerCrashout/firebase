@@ -105,6 +105,8 @@ Run each question in the app, open **Sources**, and fill the last three columns 
 ## AI tools used
 
 Claude was used to generate the first version of the Rust code
+Prompt: publish the file and ask to create a rust code using specific crates only.
+(I didn't save the claude version code because I forgot)
 
 ## Demonstration video
 
