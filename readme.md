@@ -26,7 +26,7 @@ Computational Thinking — Practice 03, University of Science (VNU-HCM), Faculty
 
 ```
 Cargo.toml
-knowledge_base.json     the travel guide (16 entries)
+knowledge_base.json     the travel guide (12 entries)
 static/index.html       sign-in form + chat UI
 src/main.rs             routes, token check, chat history
 src/firebase_client.rs  Firebase sign-up / sign-in (REST)
