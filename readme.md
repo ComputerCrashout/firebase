@@ -90,17 +90,17 @@ Run each question in the app, open **Sources**, and fill the last three columns 
 ![alt text](image-1.png)
 ![alt text](image-2.png)
 
-### Decomposition & Pattern Recognition
+### Decomposition & Pattern Recognition & Algorithm Design
 
-| # | Step (Decomposition) | Input → Output | Where in the project | Pattern (Recognition) |
-|---|---|---|---|---|
-| 1 | Sign in | email + password → Firebase ID token | `src/firebase_client.rs` | Same email/password flow as **Lab 3** |
-| 2 | Check token | token → signed-in user, or 401 | `authenticate()` in `src/main.rs` | Same **Lab 3** token check, now on every protected route |
-| 3 | Embed | question text → vector | `embed()` in `src/rag.rs` | Same Ollama embedding call as **Lab 4**, also used to embed the guide at startup |
-| 4 | Retrieve | vector → top-k entries with scores | `retrieve()` in `src/rag.rs` | Repeating **filter → score → top-k** pattern, reusable with a category filter in RAG-Rec |
-| 5 | Build context | relevant entries → text block `[id] title + text` | `answer()` in `src/rag.rs` | Same context format for every question: `[id]` plus text |
-| 6 | Generate | context + question → cited answer or "I don't know" | `answer()` in `src/rag.rs` | Same Ollama chat call as **Lab 4**, with a fixed rule: answer only from the context |
-| 7 | Display | answer + hits → chat bubble + Sources panel | `static/index.html` | Same message pattern for user and assistant, with an expandable Sources list |
+| # | Step (Decomposition) | Input → Output | Where in the project | Pattern (Recognition) | Algorithm (rule applied) |
+|---|---|---|---|---|---|
+| 1 | Sign in | email + password → Firebase ID token | `src/firebase_client.rs` | Same email/password flow as **Lab 3** | If email or password is empty → show message and stop; if Firebase rejects → "Wrong email or password." |
+| 2 | Check token | token → signed-in user, or 401 | `authenticate()` in `src/main.rs` | Same **Lab 3** token check, now on every protected route | If token is missing, invalid or expired → 401 and back to sign-in |
+| 3 | Embed | question text → vector | `embed()` in `src/rag.rs` | Same Ollama embedding call as **Lab 4**, also used to embed the guide at startup | If question is empty → "Please type a question." and stop; otherwise embed with `embeddinggemma` |
+| 4 | Retrieve | vector → top-k entries with scores | `retrieve()` in `src/rag.rs` | Repeating **filter → score → top-k** pattern, reusable with a category filter in RAG-Rec | Filter entries → score each by **cosine similarity** → sort highest first → keep `TOP_K` = 3 |
+| 5 | Build context | relevant entries → text block `[id] title + text` | `answer()` in `src/rag.rs` | Same context format for every question: `[id]` plus text | Keep only entries with score ≥ `MIN_SCORE` (0.40). **If none → answer "I don't know" and skip the model** |
+| 6 | Generate | context + question → cited answer or "I don't know" | `answer()` in `src/rag.rs` | Same Ollama chat call as **Lab 4**, with a fixed rule: answer only from the context | Ask `qwen3:4b` to answer **only** from the context, cite `[ID]`, or say "I don't know" |
+| 7 | Display | answer + hits → chat bubble + Sources panel | `static/index.html` | Same message pattern for user and assistant, with an expandable Sources list | Show the answer and all top-k entries with scores; mark entries that passed the threshold as "used" |
 
 ## AI tools used
 
